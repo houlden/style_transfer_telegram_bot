@@ -1,4 +1,3 @@
-import asyncio
 import torch
 import torch.nn as nn
 
@@ -7,10 +6,10 @@ from ml_models.nst_gatys.optimizer import get_input_optimizer
 from ml_models.nst_gatys.settings import NUM_STEPS, STYLE_WEIGHT, CONTENT_WEIGHT
 
 
-async def style_transfer_loop(cnn: nn.Module, normalization_mean: torch.Tensor, normalization_std: torch.Tensor,
-                              content_image: torch.Tensor, style_image: torch.Tensor, input_image: torch.Tensor,
-                              num_steps: int = NUM_STEPS, style_weight: int = STYLE_WEIGHT,
-                              content_weight: int = CONTENT_WEIGHT) -> torch.Tensor:
+def style_transfer_loop(cnn: nn.Module, normalization_mean: torch.Tensor, normalization_std: torch.Tensor,
+                        content_image: torch.Tensor, style_image: torch.Tensor, input_image: torch.Tensor,
+                        num_steps: int = NUM_STEPS, style_weight: int = STYLE_WEIGHT,
+                        content_weight: int = CONTENT_WEIGHT) -> torch.Tensor:
     """
     Реализует процесс стилизации изображения content под изображение style.
 
@@ -33,7 +32,6 @@ async def style_transfer_loop(cnn: nn.Module, normalization_mean: torch.Tensor, 
 
     run = 0
     while run <= num_steps:
-        await asyncio.sleep(0)  # Добавим асинхронный выход, чтобы бот мог реагировать на события во время обучения
 
         # Поскольку у нас нет функции подсчета loss-а, реализуем её явно в виде замыкания
         def closure():

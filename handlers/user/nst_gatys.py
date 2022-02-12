@@ -1,8 +1,10 @@
+import asyncio
 import os
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
+import multiprocessing
 
 from bot_init import dp, bot
 from ml_models.nst_gatys.run_style_transfer import run
@@ -31,6 +33,8 @@ async def start_nst(callback: CallbackQuery):
 
 
 async def cancel_nst(message: Message, state: FSMContext):
+    # async with state.proxy() as data:
+    #     print(data.state)
     await state.finish()
     await message.answer('Обработка прервана, попробуем снова?', reply_markup=inline.user_kb.mode_selection_kb)
 
@@ -48,13 +52,12 @@ async def get_content_image_save_data_and_processing(message: Message, state: FS
         data['content'] = message.photo[-1].file_id
     await message.answer('Обработка может занять около 10 минут, вычисления производятся на CPU')
     # await message.answer('Для выхода из процесса обработки нажмите "Cancel"', reply_markup=standard.user_kb.cancel_kb)
-    style_path, content_path, output_path = await save_data(message=message, state=state)
-    await image_processing(message=message, state=state, style_path=style_path, content_path=content_path,
-                           output_path=output_path)
+    style_path, content_path, output_path = await save_data(state=state)
+    await image_processing(message=message, style_path=style_path, content_path=content_path, output_path=output_path)
     await state.finish()
 
 
-async def save_data(message: Message, state: FSMContext):
+async def save_data(state: FSMContext):
     async with state.proxy() as data:
         style_id = data['style']
         content_id = data['content']
@@ -81,10 +84,14 @@ async def save_data(message: Message, state: FSMContext):
     return style_path, content_path, output_path
 
 
-async def image_processing(message: Message, state: FSMContext, style_path, content_path, output_path):
-    await run(style_path, content_path, output_path)
-    with open(output_path, 'rb') as f:
-        await bot.send_photo(message.from_user.id, f)
+async def image_processing(message: Message, style_path, content_path, output_path):
+    loop = asyncio.get_event_loop()
+
+    def send_output_image(output_image):
+        loop.create_task(bot.send_photo(message.from_user.id, output_image))
+
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    pool.apply_async(func=run, args=(style_path, content_path, output_path,), callback=send_output_image)
 
 
 def register_handlers_nst(dp: Dispatcher):
