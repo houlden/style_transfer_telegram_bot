@@ -1,10 +1,10 @@
 import asyncio
+import multiprocessing
 import os
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
-import multiprocessing
 
 from bot_init import dp, bot
 from ml_models.nst_gatys.run_style_transfer import run
