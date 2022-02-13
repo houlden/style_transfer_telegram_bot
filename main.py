@@ -5,11 +5,17 @@ import handlers  # Запуск хэндлеров через init пакета
 
 
 async def on_startup(_):
+    """
+    Срабатывает во время запуска бота.
+    """
     await bot.send_message(chat_id=ADMIN_ID, text='Бот запущен')
     await bot.set_webhook(WEBHOOK_URL)
 
 
 async def on_shutdown(_):
+    """
+    Срабатывает при завершении работы бота.
+    """
     await bot.send_message(chat_id=ADMIN_ID, text='Бот выключен')
     await storage.close()
     # await bot.delete_webhook()

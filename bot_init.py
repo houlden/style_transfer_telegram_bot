@@ -3,6 +3,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from config import BOT_TOKEN
 
 
+# Заведем хранилище в RAM для передачи информации между состояниями
 storage = MemoryStorage()
 
 bot = Bot(token=BOT_TOKEN, parse_mode='HTML')

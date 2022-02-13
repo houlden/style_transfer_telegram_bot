@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
+# Основная клавиатура - выбор режима работы
 mode_selection_kb = InlineKeyboardMarkup(row_width=1)
 
 help_button = InlineKeyboardButton('Help', callback_data='help')
