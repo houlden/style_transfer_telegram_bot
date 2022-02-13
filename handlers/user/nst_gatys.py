@@ -1,6 +1,5 @@
 import asyncio
 import multiprocessing
-import os
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -45,14 +44,14 @@ async def get_style_image(message: Message, state: FSMContext):
 async def get_content_image_save_data_and_processing(message: Message, state: FSMContext):
     async with state.proxy() as data:
         data['content'] = message.photo[-1].file_id
-    style_path, content_path, output_path = await save_data(state=state)
-    await image_processing(message=message, style_path=style_path, content_path=content_path, output_path=output_path)
+    style_image, content_image = await download_data(state=state)
+    await image_processing(message=message, style_image=style_image, content_image=content_image)
     await message.answer('Добавлено в очередь на обработку. Стилизация производится на CPU, это займет некоторое время.'
                          '\nЧто-нибудь ещё?', reply_markup=inline.user_kb.mode_selection_kb)
     await state.finish()
 
 
-async def save_data(state: FSMContext):
+async def download_data(state: FSMContext):
     async with state.proxy() as data:
         style_id = data['style']
         content_id = data['content']
@@ -63,30 +62,17 @@ async def save_data(state: FSMContext):
     downloaded_style = await bot.download_file(file_style.file_path)
     downloaded_content = await bot.download_file(file_content.file_path)
 
-    _, style_extension = os.path.splitext(file_style.file_path)
-    _, content_extension = os.path.splitext(file_content.file_path)
-
-    style_path = 'images/' + style_id + style_extension
-    content_path = 'images/' + content_id + content_extension
-    output_path = 'images/' + style_id + content_id + content_extension
-
-    with open(style_path, 'wb') as f:
-        f.write(downloaded_style.read())
-
-    with open(content_path, 'wb') as f:
-        f.write(downloaded_content.read())
-
-    return style_path, content_path, output_path
+    return downloaded_style, downloaded_content
 
 
-async def image_processing(message: Message, style_path, content_path, output_path):
+async def image_processing(message: Message, style_image, content_image):
     loop = asyncio.get_event_loop()
 
     def send_output_image(output_image):
         loop.create_task(bot.send_photo(message.from_user.id, output_image))
 
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
-    pool.apply_async(func=run, args=(style_path, content_path, output_path,), callback=send_output_image)
+    pool.apply_async(func=run, args=(style_image, content_image,), callback=send_output_image)
 
 
 def register_handlers_nst(dp: Dispatcher):
