@@ -1,7 +1,7 @@
 from bot_init import bot, dp, storage
 from aiogram import executor
 from config import ADMIN_ID, WEBHOOK_URL, WEBHOOK_PATH, HOST, PORT
-import handlers  # Запуск хэндлеров
+import handlers  # Запуск хэндлеров через init пакета
 
 
 async def on_startup(_):
