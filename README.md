@@ -32,11 +32,11 @@
 
 Для работы бота необходимо добавить в окружение следующие переменные среды (или создать в корневой директории файл `.env`):
 
-* *BOT_TOKEN=<your telegram bot token>*
-* *ADMIN_ID=<your telegram account ID>*
-* *WEBHOOK_URL=<your webhook url>*
-* *WEBHOOK_PATH=<your webhook path>*
-* *HOST=<your host>*
+* *BOT_TOKEN=**your telegram bot token***
+* *ADMIN_ID=**your telegram account ID***
+* *WEBHOOK_URL=**your webhook url***
+* *WEBHOOK_PATH=**your webhook path***
+* *HOST=**your host***
 
 ## ML Models
 
