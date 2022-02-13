@@ -1,7 +1,6 @@
 import torchvision.transforms as transforms
 import torch
 from PIL import Image
-import matplotlib.pyplot as plt
 import io
 
 from ml_models.nst_gatys.settings import DEVICE, IMAGE_SIZE
@@ -33,16 +32,6 @@ def image_loader_from_RAM(image):
             return image.to(DEVICE, torch.float)
     except IOError:
         raise IOError
-
-
-def imshow(tensor, title=None):
-    image = tensor.cpu().clone()
-    image = image.squeeze(0)
-    image = transform_tensor_to_PIL(image)
-    plt.imshow(image)
-    if title is not None:
-        plt.title(title)
-    plt.pause(10)
 
 
 def save_image_disk(tensor, path):
