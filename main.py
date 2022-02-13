@@ -12,7 +12,7 @@ async def on_startup(_):
 async def on_shutdown(_):
     await bot.send_message(chat_id=ADMIN_ID, text='Бот выключен')
     await storage.close()
-    await bot.delete_webhook()
+    # await bot.delete_webhook()
 
 
 if __name__ == '__main__':
