@@ -11,7 +11,7 @@ CONTENT_LAYERS = ['conv_4']
 STYLE_LAYERS = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
 
 # Первые 11 слоев (5 сверток VGG19)
-CNN_WEIGHTS_PATH = 'ml_models/nst_gatys/pretrained_models/vgg19_first_five_conv_layers.pth'
+CNN_PRETRAINED_PATH = 'ml_models/nst_gatys/pretrained_models/vgg19_first_11_layers.pth'
 
 # Средние значения, по которым нормировалась VGG19
 NORMALIZATION_MEAN = torch.tensor([0.485, 0.456, 0.406])
