@@ -12,3 +12,5 @@ WEBHOOK_URL = os.getenv('WEBHOOK_URL')
 WEBHOOK_PATH = os.getenv('WEBHOOK_PATH')
 HOST = os.getenv('HOST')
 PORT = int(os.environ.get('PORT', 5000))
+
+EXAMPLE_PATH_GATYS = 'examples/nst_gatys/results.jpg'
