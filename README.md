@@ -44,6 +44,8 @@
 
 Пакетная реализация [алгоритма Гатиса](https://arxiv.org/abs/1508.06576) на основе кода из официального туториала [NEURAL TRANSFER USING PYTORCH](https://pytorch.org/tutorials/advanced/neural_style_tutorial.html).
 
+Для переноса стиля используются первые 11 слоев предобученной VGG19 (`ml_models/nst_gatys/pretrained_models/vgg19_first_11_layers.pth`).
+
 #### Примеры
 
 ![Результат переноса стиля](https://raw.githubusercontent.com/houlden/style_transfer_telegram_bot/main/examples/nst_gatys/results.jpg)
@@ -61,3 +63,10 @@
 * `image_preparation.py` - модуль с функциями для преобразования изображений
 
 ## Дальнейшие планы
+
+1. Добавить padding к изображениям, чтобы иметь возможность сохранения пропорций изначальной картинки в NST-Gatys.
+2. Добавить возможность переноса нескольких стилей на одно изображение в NST-Gatys.
+3. Добавить реализации [AdaIN](https://arxiv.org/abs/1703.06868) и [UltraST](https://arxiv.org/abs/2003.08436) для RealTime переноса стиля.
+4. Добавить реализацию [CycleGAN](https://arxiv.org/abs/1703.10593).
+5. Реализовать очередь обработки (в настоящий момент бот работает асинхронно, но запускает новую обработку вне зависимости от того, сколько процессов уже запущено - это может привести к зависанию).
+6. Добавить логирование.
