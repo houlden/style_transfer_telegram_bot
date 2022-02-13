@@ -13,9 +13,9 @@ def style_transfer_loop(cnn: nn.Module, normalization_mean: torch.Tensor, normal
     """
     Реализует процесс стилизации изображения content под изображение style.
 
-    :param cnn: nn.Module - Предобученная свёрточная нейросеть VGG19 (или VGG16)
-    :param normalization_mean: torch.Tensor - Средние значения, по которым нормировалась VGG19
-    :param normalization_std: torch.Tensor - Стандартные отклонения, по которым нормировалась VGG19
+    :param cnn: nn.Module - Предобученная свёрточная нейросеть
+    :param normalization_mean: torch.Tensor - Средние значения, по которым нормировалась cnn
+    :param normalization_std: torch.Tensor - Стандартные отклонения, по которым нормировалась cnn
     :param content_image: torch.Tensor - Изображение content
     :param style_image: torch.Tensor - Изображение style
     :param input_image: torch.Tensor - Входное изображение

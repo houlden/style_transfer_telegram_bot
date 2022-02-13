@@ -1,3 +1,4 @@
+import io
 import torch
 
 
@@ -6,7 +7,14 @@ from ml_models.nst_gatys.settings import DEVICE, NORMALIZATION_MEAN, NORMALIZATI
 from ml_models.nst_gatys.train_loop import style_transfer_loop
 
 
-def run(style_image, content_image):
+def run(style_image: io.BytesIO, content_image: io.BytesIO):
+    """
+    Преобразует изображения в тензор, приводит их к общему размеру, загружает модель и запускает стилизацию.
+
+    :param style_image: io.BytesIO - изображение style
+    :param content_image: io.BytesIO - изображение content
+    :return: io.BytesIO
+    """
     style_image = image_loader_from_RAM(style_image)
     content_image = image_loader_from_RAM(content_image)
     input_image = content_image.clone()

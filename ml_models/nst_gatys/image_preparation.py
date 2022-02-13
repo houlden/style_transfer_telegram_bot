@@ -16,7 +16,10 @@ transform_PIL_to_tensor_resize_and_crop = transforms.Compose([
 transform_tensor_to_PIL = transforms.ToPILImage()
 
 
-def image_loader_from_file(image_path):
+def image_loader_from_file(image_path: str):
+    """
+    Загружает изображение из файла, ресайзит и преобразует в тензор.
+    """
     try:
         with Image.open(image_path) as image:
             image = transform_PIL_to_tensor_resize_and_crop(image).unsqueeze(0)
@@ -25,7 +28,10 @@ def image_loader_from_file(image_path):
         raise IOError
 
 
-def image_loader_from_RAM(image):
+def image_loader_from_RAM(image: io.BytesIO):
+    """
+    Загружает изображение из памяти, ресайзит и преобразует в тензор.
+    """
     try:
         with Image.open(image) as image:
             image = transform_PIL_to_tensor_resize_and_crop(image).unsqueeze(0)
@@ -34,14 +40,22 @@ def image_loader_from_RAM(image):
         raise IOError
 
 
-def save_image_disk(tensor, path):
+def save_image_disk(tensor: torch.Tensor, path: str):
+    """
+    Преобразует изображение из torch.Tensor в PIL и сохраняет по пути path.
+    """
     image = tensor.cpu().clone()
     image = image.squeeze(0)
     image = transform_tensor_to_PIL(image)
     image.save(path)
 
 
-def save_image_RAM(tensor):
+def save_image_RAM(tensor: torch.Tensor):
+    """
+    Преобразует изображение из torch.Tensor в PIL и возвращает io.BytesIO.
+
+    :return: io.BytesIO
+    """
     image = tensor.cpu().clone()
     image = image.squeeze(0)
     image = transform_tensor_to_PIL(image)

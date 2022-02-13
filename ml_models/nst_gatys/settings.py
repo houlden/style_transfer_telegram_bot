@@ -3,7 +3,7 @@ import torch
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Размер выходного изображения IMAGE_SIZE*IMAGE_SIZE
-IMAGE_SIZE = 128
+IMAGE_SIZE = 256
 
 # Слои, по которым считается content-loss
 CONTENT_LAYERS = ['conv_4']

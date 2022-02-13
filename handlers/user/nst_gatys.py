@@ -72,7 +72,8 @@ async def get_content_image_save_data_and_processing(message: Message, state: FS
 async def download_data(state: FSMContext):
     """
     Загружает с серверов telegram по ID изображения style и content.
-    :return downloaded_style: io.BytesIO, downloaded_content: io.BytesIO - изображения style и content.
+
+    :return: downloaded_style: io.BytesIO, downloaded_content: io.BytesIO - изображения style и content.
     """
     async with state.proxy() as data:
         style_id = data['style']
@@ -91,17 +92,19 @@ async def image_processing(message: Message, style_image: io.BytesIO, content_im
     """
     Асинхронно запускает функцию run в отдельном пуле процессов для переноса стиля.
     Перенесенный стиль отправляется пользователю через callback.
+
     :param message: Message
     :param style_image: io.BytesIO - изображение style
     :param content_image: io.BytesIO - изображение content
     """
     # Получим цикл обработки событий основного потока для того, чтобы из синхронного метода callback запустить
-    # асинхронный метод bot.send_photo.
+    # асинхронный метод bot.send_photo. Вероятно, это костыль, но не разобрался, как сделать лучше.
     loop = asyncio.get_event_loop()
 
-    def send_output_image(output_image):
+    def send_output_image(output_image: io.BytesIO):
         """
         Отправляет пользователю перенесенный стиль по callback-у
+
         :param output_image: io.BytesIO - результат переноса стиля
         """
         loop.create_task(bot.send_photo(message.from_user.id, output_image))
@@ -112,7 +115,7 @@ async def image_processing(message: Message, style_image: io.BytesIO, content_im
 
 def register_handlers_nst(dp: Dispatcher):
     """
-    Регистрирует все хэндлеры.
+    Регистрирует все хэндлеры разом.
     """
     dp.register_callback_query_handler(start_nst, text='NST-Gatys', state=None)
     dp.register_message_handler(cancel_nst, Text(equals='Cancel', ignore_case=True), state='*')
