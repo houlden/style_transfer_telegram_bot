@@ -3,6 +3,7 @@ import multiprocessing
 import os
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
 
@@ -17,24 +18,19 @@ class FSM_NST(StatesGroup):
 
 
 async def start_nst(callback: CallbackQuery):
-    await callback.message.answer(
-        'Загрузите изображение, стиль которого нужно перенести'
-    )
     await FSM_NST.first()
-    await callback.message.answer('Для выхода из процесса обработки нажмите "Cancel"',
-                                  reply_markup=standard.user_kb.cancel_kb)
+    await callback.message.answer(
+        'Загрузите изображение, стиль которого нужно перенести:'
+        '\n(для выхода из процесса обработки нажмите "Cancel")',
+        reply_markup=standard.user_kb.cancel_kb
+    )
     await callback.answer()
 
 
-# async def cancel_nst(callback: CallbackQuery, state: FSMContext):
-#     await state.finish()
-#     await callback.message.answer('Обработка прервана, попробуем снова?', reply_markup=user_kb.mode_selection_kb)
-#     await callback.answer()
-
-
 async def cancel_nst(message: Message, state: FSMContext):
-    # async with state.proxy() as data:
-    #     print(data.state)
+    current_state = await state.get_state()
+    if current_state is None:
+        return
     await state.finish()
     await message.answer('Обработка прервана, попробуем снова?', reply_markup=inline.user_kb.mode_selection_kb)
 
@@ -44,16 +40,15 @@ async def get_style_image(message: Message, state: FSMContext):
         data['style'] = message.photo[-1].file_id
     await FSM_NST.next()
     await message.answer('Загрузите изображение, которое нужно стилизовать')
-    # await message.answer('Для выхода из процесса обработки нажмите "Cancel"', reply_markup=standard.user_kb.cancel_kb)
 
 
 async def get_content_image_save_data_and_processing(message: Message, state: FSMContext):
     async with state.proxy() as data:
         data['content'] = message.photo[-1].file_id
-    await message.answer('Обработка может занять около 10 минут, вычисления производятся на CPU')
-    # await message.answer('Для выхода из процесса обработки нажмите "Cancel"', reply_markup=standard.user_kb.cancel_kb)
     style_path, content_path, output_path = await save_data(state=state)
     await image_processing(message=message, style_path=style_path, content_path=content_path, output_path=output_path)
+    await message.answer('Добавлено в очередь на обработку. Стилизация производится на CPU, это займет некоторое время.'
+                         '\nЧто-нибудь ещё?', reply_markup=inline.user_kb.mode_selection_kb)
     await state.finish()
 
 
@@ -96,8 +91,7 @@ async def image_processing(message: Message, style_path, content_path, output_pa
 
 def register_handlers_nst(dp: Dispatcher):
     dp.register_callback_query_handler(start_nst, text='NST-Gatys', state=None)
-    # dp.register_callback_query_handler(cancel_nst, text='cancel', state='*')
-    dp.register_message_handler(cancel_nst, commands=['cancel'], state='*')
+    dp.register_message_handler(cancel_nst, Text(equals='Cancel', ignore_case=True), state='*')
     dp.register_message_handler(get_style_image, content_types=['photo'], state=FSM_NST.get_style_image)
     dp.register_message_handler(get_content_image_save_data_and_processing, content_types=['photo'],
                                 state=FSM_NST.get_content_image_save_data_and_processing)
