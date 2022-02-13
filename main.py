@@ -1,8 +1,6 @@
-import os
-
 from bot_init import bot, dp, storage
 from aiogram import executor
-from config import ADMIN_ID, WEBHOOK_URL
+from config import ADMIN_ID, WEBHOOK_URL, WEBHOOK_PATH, HOST, PORT
 import handlers  # Запуск хэндлеров
 
 
@@ -23,9 +21,9 @@ if __name__ == '__main__':
     #                        on_shutdown=on_shutdown,
     #                        skip_updates=True)
     executor.start_webhook(dispatcher=dp,
-                           webhook_path='',
+                           webhook_path=WEBHOOK_PATH,
                            on_startup=on_startup,
                            on_shutdown=on_shutdown,
                            skip_updates=True,
-                           host='0.0.0.0',
-                           port=int(os.environ.get('PORT', 5000)))
+                           host=HOST,
+                           port=PORT)
