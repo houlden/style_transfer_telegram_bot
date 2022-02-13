@@ -2,13 +2,13 @@ import os
 
 from bot_init import bot, dp, storage
 from aiogram import executor
-from config import ADMIN_ID
+from config import ADMIN_ID, WEBHOOK_URL
 import handlers  # Запуск хэндлеров
 
 
 async def on_startup(_):
     await bot.send_message(chat_id=ADMIN_ID, text='Бот запущен')
-    await bot.set_webhook()
+    await bot.set_webhook(WEBHOOK_URL)
 
 
 async def on_shutdown(_):
