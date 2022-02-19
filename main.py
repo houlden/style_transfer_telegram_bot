@@ -1,6 +1,6 @@
 from bot_init import bot, dp, storage
 from aiogram import executor
-from config import ADMIN_ID, WEBHOOK_URL, WEBHOOK_PATH, HOST, PORT
+from config import ADMIN_ID, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
 import handlers  # Запуск хэндлеров через init пакета (возможно лучше было вызывать их явно из main, не уверен)
 
 
@@ -17,8 +17,9 @@ async def on_shutdown(_):
     Срабатывает при завершении работы бота.
     """
     await bot.send_message(chat_id=ADMIN_ID, text='Бот выключен')
-    await storage.close()
     # await bot.delete_webhook()
+    # await storage.close()
+    # await storage.wait_closed()
 
 
 if __name__ == '__main__':
@@ -31,5 +32,5 @@ if __name__ == '__main__':
                            on_startup=on_startup,
                            on_shutdown=on_shutdown,
                            skip_updates=True,
-                           host=HOST,
-                           port=PORT)
+                           host=WEBAPP_HOST,
+                           port=WEBAPP_PORT)
